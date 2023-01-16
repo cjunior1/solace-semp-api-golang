@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
 
 	swagger "github.com/cjunior1/solace-semp-api-golang"
 )
@@ -18,14 +19,14 @@ func main() {
 
 	// credenciais
 	credencial := &swagger.BasicAuth{}
-	credencial.UserName = "rd-ecommerce-admin"
-	credencial.Password = "lbqob38eocodjs27pik5ikkb5k"
+	credencial.UserName = os.Getenv("SOLACE_USER_NAME")
+	credencial.Password = os.Getenv("SOLACE_PASSWORD")
 
 	ctx = context.WithValue(ctx, swagger.ContextBasicAuth, *credencial)
 
 	// estado atual
 	queueName := "xx-demo-producer-happy-path-dev"
-	serviceName := "rd-ecommerce"
+	serviceName := os.Getenv("SOLACE_SERVICE_NAME")
 	subscriptionTopic := "xx/demo/producer/happy/path/dev5"
 
 	resp, _, err := client.MsgVpnApi.GetMsgVpnQueueSubscription(ctx, serviceName, queueName, url.PathEscape(subscriptionTopic), nil)
@@ -52,7 +53,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("#############")
+	fmt.Println("############# LIST OF TOPICS ##############")
 	for _, s := range subs.Data {
 		fmt.Println(s.SubscriptionTopic)
 	}
